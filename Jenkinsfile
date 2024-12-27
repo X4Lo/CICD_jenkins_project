@@ -54,7 +54,7 @@ pipeline {
         stage('Verify WAR') {
             steps {
                 script {
-                    if (!fileExists('target/devopprj-0.0.1-SNAPSHOT.war')) {
+                    if (!fileExists('target/DevopPrj-0.0.1-SNAPSHOT.war')) {
                         error 'WAR file not found. Build failed.'
                     }
                 }
