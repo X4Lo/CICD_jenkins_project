@@ -7,10 +7,10 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS_ID = 'docker-auth-token'
-        DOCKER_HUB_REGISTRY = 'https://registry.hub.docker.com'
+        DOCKER_HUB_REGISTRY = ''
         DOCKER_REPO = 'x4lo/my-library-api'
         DOCKER_TAG = 'latest'
-        
+
         REMOTE_SERVER = 'ubuntu@localhost'
         // REMOTE_SERVER_SSH = credentials('remote-server-ssh')
 
