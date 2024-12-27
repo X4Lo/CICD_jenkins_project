@@ -6,9 +6,11 @@ pipeline {
     }
 
     environment {
-        DOCKER_CREDENTIALS_ID = credentials('docker-auth-token')
+        DOCKER_CREDENTIALS_ID = 'docker-auth-token'
+        DOCKER_HUB_REGISTRY = 'https://registry.hub.docker.com'
         DOCKER_REPO = 'x4lo/my-library-api'
         DOCKER_TAG = 'latest'
+        
         REMOTE_SERVER = 'ubuntu@localhost'
         // REMOTE_SERVER_SSH = credentials('remote-server-ssh')
 
@@ -61,23 +63,19 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Building Docker Image') {
             steps {
                 script {
-                    sh """
-                    docker build -t ${DOCKER_REPO}:${DOCKER_TAG} .
-                    """
+                    appImage = docker.build("${DOCKER_REPO}:${DOCKER_TAG}", ".")
                 }
             }
         }
 
-        stage('Push to Docker Hub') {
+        stage('Pushing Image to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
-                        sh """
-                        docker push ${DOCKER_REPO}:${DOCKER_TAG}
-                        """
+                    docker.withRegistry(DOCKER_HUB_REGISTRY, DOCKER_CREDENTIALS_ID) {
+                        appImage.push()
                     }
                 }
             }
