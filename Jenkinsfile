@@ -10,7 +10,7 @@ pipeline {
         DOCKER_REPO = 'x4lo/my-library-api'
         DOCKER_TAG = 'latest'
         REMOTE_SERVER = 'ubuntu@localhost'
-        REMOTE_SERVER_SSH = credentials('remote-server-ssh')
+        // REMOTE_SERVER_SSH = credentials('remote-server-ssh')
 
         // SONARQUBE_TOKEN = credentials('SonarQube-auth-token')
         SONARQUBE_ENV_NAME   = 'SonarQubeServer'
