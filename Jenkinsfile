@@ -51,37 +51,37 @@ pipeline {
             }
         }
 
-        // stage('Verify WAR') {
-        //     steps {
-        //         script {
-        //             if (!fileExists('target/devopprj-0.0.1-SNAPSHOT.war')) {
-        //                 error 'WAR file not found. Build failed.'
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Verify WAR') {
+            steps {
+                script {
+                    if (!fileExists('target/devopprj-0.0.1-SNAPSHOT.war')) {
+                        error 'WAR file not found. Build failed.'
+                    }
+                }
+            }
+        }
 
-        // stage('Build Docker Image') {
-        //     steps {
-        //         script {
-        //             sh """
-        //             docker build -t ${DOCKER_REPO}:${DOCKER_TAG} .
-        //             """
-        //         }
-        //     }
-        // }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh """
+                    docker build -t ${DOCKER_REPO}:${DOCKER_TAG} .
+                    """
+                }
+            }
+        }
 
-        // stage('Push to Docker Hub') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
-        //                 sh """
-        //                 docker push ${DOCKER_REPO}:${DOCKER_TAG}
-        //                 """
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
+                        sh """
+                        docker push ${DOCKER_REPO}:${DOCKER_TAG}
+                        """
+                    }
+                }
+            }
+        }
 
         // stage('Deploy to Remote Server') {
         //     steps {
@@ -101,7 +101,9 @@ pipeline {
     }
 
     post {
-        
+        // always {
+        //     junit '**/target/surefire-reports/*.xml'
+        // }
         success {
             echo 'Pipeline completed successfully!'
         }
