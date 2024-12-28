@@ -26,18 +26,21 @@ pipeline {
 
         stage('Build') {
             steps {
+                echo 'Building the project...'
                 sh 'mvn clean install'
             }
         }
 
         stage('Test') {
             steps {
+                echo 'Running Tests...'
                 sh 'mvn test'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
+                echo 'Running SonarQube Analysis...'
                 withSonarQubeEnv(SONARQUBE_ENV_NAME) {
                     sh 'mvn sonar:sonar -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY}'
                 }
@@ -46,12 +49,14 @@ pipeline {
 
         stage('Package') {
             steps {
+                echo 'Packaging the project...'
                 sh 'mvn package'
             }
         }
 
         stage('Verify WAR File') {
             steps {
+                echo 'Verifying the WAR package existence...'
                 script {
                     if (!fileExists('target/DevopPrj-0.0.1-SNAPSHOT.war')) {
                         error 'WAR file not found. Build failed.'
@@ -62,6 +67,7 @@ pipeline {
 
         stage('Building Docker Image') {
             steps {
+                echo 'Building Docker Image...'
                 script {
                     appImage = docker.build("${DOCKER_REPO}:${DOCKER_TAG}", ".")
                 }
@@ -70,6 +76,7 @@ pipeline {
 
         stage('Pushing Image to Docker Hub') {
             steps {
+                echo 'Pushing Image to Docker Hub...'
                 script {
                     docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
                         appImage.push()
@@ -80,6 +87,7 @@ pipeline {
 
         stage('Deploy to Remote Server') {
             steps {
+                echo 'Deploying to a Remote Server...'
                 sshagent([REMOTE_SERVER_SSH]) {
                     sh """
                     ssh -o StrictHostKeyChecking=no $REMOTE_SERVER "
