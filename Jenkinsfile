@@ -47,34 +47,34 @@ pipeline {
         //     }
         // }
 
-        stage('Package') {
-            steps {
-                sh 'mvn package'
-            }
-        }
+        // stage('Package') {
+        //     steps {
+        //         sh 'mvn package'
+        //     }
+        // }
 
-        stage('Verify WAR') {
-            steps {
-                script {
-                    if (!fileExists('target/DevopPrj-0.0.1-SNAPSHOT.war')) {
-                        error 'WAR file not found. Build failed.'
-                    }
-                }
-            }
-        }
+        // stage('Verify WAR') {
+        //     steps {
+        //         script {
+        //             if (!fileExists('target/DevopPrj-0.0.1-SNAPSHOT.war')) {
+        //                 error 'WAR file not found. Build failed.'
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Building Docker Image') {
-            steps {
-                script {
-                    appImage = docker.build("${DOCKER_REPO}:${DOCKER_TAG}", ".")
-                }
-            }
-        }
+        // stage('Building Docker Image') {
+        //     steps {
+        //         script {
+        //             appImage = docker.build("${DOCKER_REPO}:${DOCKER_TAG}", ".")
+        //         }
+        //     }
+        // }
 
         stage('Pushing Image to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry(DOCKER_HUB_REGISTRY, DOCKER_CREDENTIALS_ID) {
+                    docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
                         appImage.push()
                     }
                 }
