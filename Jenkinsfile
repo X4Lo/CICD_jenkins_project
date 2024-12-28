@@ -6,17 +6,14 @@ pipeline {
     }
 
     environment {
-        DOCKER_CREDENTIALS_ID = 'docker-auth-token'
-        DOCKER_HUB_REGISTRY = ''
+        DOCKER_CREDENTIALS_ID = 'docker-auth'
         DOCKER_REPO = 'x4lo/my-library-api'
         DOCKER_TAG = 'latest'
 
-        REMOTE_SERVER = 'ubuntu@localhost'
-        // REMOTE_SERVER_SSH = credentials('remote-server-ssh')
+        REMOTE_SERVER = 'xaloubuntu2@192.168.198.129'
+        REMOTE_SERVER_SSH = 'remote-server-ssh'
 
-        // SONARQUBE_TOKEN = credentials('SonarQube-auth-token')
         SONARQUBE_ENV_NAME   = 'SonarQubeServer'
-        // SONARQUBE_URL        = 'http://localhost:9000'
         SONARQUBE_PROJECT_KEY = 'X4Lo_CICD_jenkins_project'
     }
 
@@ -53,7 +50,7 @@ pipeline {
             }
         }
 
-        stage('Verify WAR') {
+        stage('Verify WAR File') {
             steps {
                 script {
                     if (!fileExists('target/DevopPrj-0.0.1-SNAPSHOT.war')) {
@@ -81,21 +78,21 @@ pipeline {
             }
         }
 
-        // stage('Deploy to Remote Server') {
-        //     steps {
-        //         sshagent([REMOTE_SERVER_SSH]) {
-        //             sh """
-        //             ssh -o StrictHostKeyChecking=no $REMOTE_SERVER "
-        //                 sudo -i &&
-        //                 sudo docker stop \$(docker ps -q --filter ancestor=${DOCKER_REPO}:${DOCKER_TAG}) || true &&
-        //                 sudo docker rm \$(docker ps -q --filter ancestor=${DOCKER_REPO}:${DOCKER_TAG}) || true &&
-        //                 sudo docker pull ${DOCKER_REPO}:${DOCKER_TAG} &&
-        //                 sudo docker run -d -p 8080:8080 ${DOCKER_REPO}:${DOCKER_TAG}
-        //             "
-        //             """
-        //         }
-        //     }
-        // }
+        stage('Deploy to Remote Server') {
+            steps {
+                sshagent([REMOTE_SERVER_SSH]) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no $REMOTE_SERVER "
+                        sudo -i &&
+                        sudo docker stop \$(docker ps -q --filter ancestor=${DOCKER_REPO}:${DOCKER_TAG}) || true &&
+                        sudo docker rm \$(docker ps -q --filter ancestor=${DOCKER_REPO}:${DOCKER_TAG}) || true &&
+                        sudo docker pull ${DOCKER_REPO}:${DOCKER_TAG} &&
+                        sudo docker run -d -p 8080:8080 ${DOCKER_REPO}:${DOCKER_TAG}
+                    "
+                    """
+                }
+            }
+        }
     }
 
     post {
