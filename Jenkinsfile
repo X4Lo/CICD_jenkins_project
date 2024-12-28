@@ -83,11 +83,10 @@ pipeline {
                 sshagent([REMOTE_SERVER_SSH]) {
                     sh """
                     ssh -o StrictHostKeyChecking=no $REMOTE_SERVER "
-                        sudo -i &&
-                        sudo docker stop \$(docker ps -q --filter ancestor=${DOCKER_REPO}:${DOCKER_TAG}) || true &&
-                        sudo docker rm \$(docker ps -q --filter ancestor=${DOCKER_REPO}:${DOCKER_TAG}) || true &&
-                        sudo docker pull ${DOCKER_REPO}:${DOCKER_TAG} &&
-                        sudo docker run -d -p 8080:8080 ${DOCKER_REPO}:${DOCKER_TAG}
+                        docker stop \$(docker ps -q --filter ancestor=${DOCKER_REPO}:${DOCKER_TAG}) || true &&
+                        docker rm \$(docker ps -q --filter ancestor=${DOCKER_REPO}:${DOCKER_TAG}) || true &&
+                        docker pull ${DOCKER_REPO}:${DOCKER_TAG} &&
+                        docker run -d -p 8080:8080 ${DOCKER_REPO}:${DOCKER_TAG}
                     "
                     """
                 }
@@ -96,9 +95,6 @@ pipeline {
     }
 
     post {
-        // always {
-        //     junit '**/target/surefire-reports/*.xml'
-        // }
         success {
             echo 'Pipeline completed successfully!'
         }
